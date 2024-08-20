@@ -1,9 +1,8 @@
-﻿namespace fit_box.Models
+﻿namespace fit_box.DTOs
 {
-    public class Login
+    public class LoginDTO
     {
         public Guid Id { get; set; }
         public string Username { get; set; }
-        public string Password { get; set; }
     }
 }
