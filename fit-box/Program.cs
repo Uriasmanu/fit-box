@@ -3,6 +3,7 @@ using fit_box.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 string chaveSecreta = "e3c46810-b96e-40d9-a9eb-9ffa7b373e5b";
@@ -36,17 +37,42 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin",
         policy =>
         {
-            policy.WithOrigins()
+            policy.AllowAnyOrigin()
                   .AllowAnyMethod()
                   .AllowAnyHeader();
-
         });
 });
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen( c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FitBox - gestor de marmitas", Version = "v1" }); // nome da api que aparece no swager
+
+    var securitySchema = new OpenApiSecurityScheme
+    {
+        Name = "JWR Autenticação",
+        Description = "Entre com o JWT Bearer token",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securitySchema);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {securitySchema, new string[] {} }
+    });
+
+});
 
 // Register the LoginService
 builder.Services.AddScoped<LoginService>();
@@ -67,6 +93,7 @@ app.UseRouting();
 
 app.UseCors();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Enable Swagger middleware

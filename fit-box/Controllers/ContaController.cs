@@ -12,49 +12,47 @@ namespace fit_box.Controllers
     [ApiController]
     public class ContaController : ControllerBase
     {
-        private readonly LoginService _loginServices;
-        private readonly string _chaveSecreta = "e3c46810-b96e-40d9-a9eb-9ffa7b373e5b"; 
+        private readonly LoginService _loginService;
+        private readonly string _chaveSecreta = "e3c46810-b96e-40d9-a9eb-9ffa7b373e5b";
 
-        public ContaController(LoginService loginServices)
+        public ContaController(LoginService loginService)
         {
-            _loginServices = loginServices;
+            _loginService = loginService;
         }
 
-        [HttpPost("login")]
-        public async Task<ActionResult<string>> Login([FromBody] Login login)
+        // POST: api/Conta/authenticate
+        [HttpPost("authenticate")]
+        public async Task<ActionResult<string>> Authenticate(Login login)
         {
-            var user = await _loginServices.AuthenticateUserAsync(login.Username, login.Password);
+            var user = await _loginService.AuthenticateUserAsync(login.Username, login.Password);
 
             if (user == null)
             {
-                return Unauthorized(new { message = "Credenciais inválidas." });
+                return Unauthorized("Invalid username or password");
             }
 
-            var token = GerarTokenJWT(user);
-            return Ok(new { token });
-        }
-
-        private string GerarTokenJWT(Login login)
-        {
-            var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_chaveSecreta));
-            var credencial = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
-
+            // Geração do token JWT
             var claims = new[]
             {
-        new Claim(ClaimTypes.NameIdentifier, login.Id.ToString()), 
-        new Claim(ClaimTypes.Name, login.Username) 
-    };
+                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_chaveSecreta));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: "your_issuer",
-                audience: "your_audience",
+                issuer: "system_tasks",
+                audience: "seus_usuarios",
                 claims: claims,
-                expires: DateTime.Now.AddHours(8),
-                signingCredentials: credencial
-            );
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.WriteToken(token);
+
+            return Ok(new { token = jwtToken });
         }
-
     }
 }

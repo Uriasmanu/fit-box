@@ -2,10 +2,11 @@
 using fit_box.DTOs;
 using fit_box.Models;
 using fit_box.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class LoginController : ControllerBase
@@ -34,21 +35,6 @@ public class LoginController : ControllerBase
         };
 
         return CreatedAtAction(nameof(GetLogin), new { id = createdUserDTO.Id }, createdUserDTO);
-    }
-
-    // POST: api/Login/authenticate
-    [HttpPost("authenticate")]
-    public async Task<ActionResult<string>> Authenticate(Login login)
-    {
-        var user = await _loginService.AuthenticateUserAsync(login.Username, login.Password);
-
-        if (user == null)
-        {
-            return Unauthorized("Invalid username or password");
-        }
-
-        // Here you would typically generate and return a JWT token
-        return Ok("Authenticated");
     }
 
     // GET: api/Login/5
