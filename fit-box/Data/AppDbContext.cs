@@ -8,6 +8,8 @@
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet <Login> Logins {get; set; }
+
+
     }
 
 }

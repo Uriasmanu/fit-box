@@ -12,7 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure the database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;Encrypt=True;TrustServerCertificate=False;Connection Timeout=60;"));
+    options.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;Encrypt=True;TrustServerCertificate=False;Connection Timeout=60;",
+    sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+    }));
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -49,7 +57,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen( c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FitBox - gestor de marmitas", Version = "v1" }); // nome da api que aparece no swager
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FitBox - Gestor de Marmitas", Version = "v1" }); // Nome da API que aparece no Swagger
+
 
     var securitySchema = new OpenApiSecurityScheme
     {
