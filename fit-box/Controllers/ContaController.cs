@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace fit_box.Controllers
 {
@@ -22,9 +23,9 @@ namespace fit_box.Controllers
 
         // POST: api/Conta/authenticate
         [HttpPost("authenticate")]
-        public async Task<ActionResult<string>> Authenticate(Login login)
+        public async Task<ActionResult<string>> Authenticate([FromBody] LoginModel loginModel)
         {
-            var user = await _loginService.AuthenticateUserAsync(login.Username, login.Password);
+            var user = await _loginService.AuthenticateUserAsync(loginModel.Username, loginModel.Password);
 
             if (user == null)
             {
