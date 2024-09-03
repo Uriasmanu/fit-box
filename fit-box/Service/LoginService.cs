@@ -21,11 +21,12 @@ namespace fit_box.Service
 
         public async Task<Login> CreateUserAsync(Login login)
         {
-            login.Password = SenhaHasher.HashSenha(login.Password);
+            login.Password = SenhaHasher.HashSenha(login.Password); // Hashing da senha
             _context.Logins.Add(login);
             await _context.SaveChangesAsync();
             return login;
         }
+
 
         public async Task<Login?> AuthenticateUserAsync(string username, string password)
         {

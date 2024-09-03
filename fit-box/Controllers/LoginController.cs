@@ -20,12 +20,19 @@ public class LoginController : ControllerBase
 
     // POST: api/Login/register
     [HttpPost("register")]
-    public async Task<ActionResult<LoginDTO>> Register(Login login)
+    public async Task<ActionResult<LoginDTO>> Register(RegisterDTO registerDTO)
     {
-        if (await _loginService.UserExistsAsync(login.Username))
+        if (await _loginService.UserExistsAsync(registerDTO.Username))
         {
             return Conflict("Username already exists");
         }
+
+        // Convertendo RegisterDTO para Login
+        var login = new Login
+        {
+            Username = registerDTO.Username,
+            Password = registerDTO.Password
+        };
 
         var createdUser = await _loginService.CreateUserAsync(login);
         var createdUserDTO = new LoginDTO
@@ -36,6 +43,7 @@ public class LoginController : ControllerBase
 
         return CreatedAtAction(nameof(GetLogin), new { id = createdUserDTO.Id }, createdUserDTO);
     }
+
 
     // GET: api/Login/5
     [HttpGet("{id}")]
