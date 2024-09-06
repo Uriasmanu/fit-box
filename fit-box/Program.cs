@@ -1,5 +1,6 @@
 using fit_box.Data;
 using fit_box.Service;
+using fit_box.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             maxRetryDelay: TimeSpan.FromSeconds(30),
             errorNumbersToAdd: null);
     }));
+
+builder.Services.AddScoped<IIngredientesService, IngredientesService>();
 
 
 builder.Services.AddAuthentication(options =>
