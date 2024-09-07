@@ -5,13 +5,27 @@
 
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
+        {
+        }
 
+        // String de conexão
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            }
+        }
+
+        // Definição das tabelas
         public DbSet<Login> Logins { get; set; }
-        public DbSet<Ingredientes> Ingredientes { get; set; }
+        public DbSet<Ingredientes> Ingrediente { get; set; }
         public DbSet<Marmita> Marmitas { get; set; }
         public DbSet<MarmitaIngrediente> MarmitaIngredientes { get; set; }
 
+        // Configurações do modelo
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

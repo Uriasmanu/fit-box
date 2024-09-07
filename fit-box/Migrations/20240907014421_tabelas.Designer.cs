@@ -12,8 +12,8 @@ using fit_box.Data;
 namespace fit_box.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240906154214_AdicionarLoginMarmitaIngredientes")]
-    partial class AdicionarLoginMarmitaIngredientes
+    [Migration("20240907014421_tabelas")]
+    partial class tabelas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

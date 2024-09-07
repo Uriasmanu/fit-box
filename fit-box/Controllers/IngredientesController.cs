@@ -4,6 +4,7 @@ using fit_box.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace fit_box.Controllers
@@ -39,23 +40,38 @@ namespace fit_box.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddIngrediente([FromBody] IngredienteDto ingredienteDto)
-        {
-            await _ingredientesService.AddIngredienteAsync(ingredienteDto);
-            return StatusCode(201); // Retorna o status 201 Created sem o ID
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateIngrediente(Guid id, [FromBody] IngredienteDto ingredienteDto)
+        public async Task<IActionResult> AddIngrediente(IngredienteDto ingredienteDto)
         {
             try
             {
-                await _ingredientesService.UpdateIngredienteAsync(id, ingredienteDto);
-                return NoContent();
+                // Convertendo todas as propriedades para minúsculas
+                ingredienteDto.NameIngrediente = ingredienteDto.NameIngrediente.ToLower();
+
+                await _ingredientesService.AddIngredienteAsync(ingredienteDto);
+                return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return NotFound();
+                // Retorne uma resposta com status 400 (Bad Request) e a mensagem de erro
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateIngrediente(Guid id, IngredienteDto ingredienteDto)
+        {
+            try
+            {
+                // Convertendo todas as propriedades para minúsculas
+                ingredienteDto.NameIngrediente = ingredienteDto.NameIngrediente.ToLower();
+
+                await _ingredientesService.UpdateIngredienteAsync(id, ingredienteDto);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Retorne uma resposta com status 400 (Bad Request) e a mensagem de erro
+                return BadRequest(new { message = ex.Message });
             }
         }
 

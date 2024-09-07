@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure the database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;Encrypt=True;TrustServerCertificate=False;Connection Timeout=50;",
+    options.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
     sqlOptions =>
     {
         sqlOptions.EnableRetryOnFailure(
