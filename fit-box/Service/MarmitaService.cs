@@ -1,5 +1,7 @@
-﻿using fit_box.Data;
+﻿// MarmitaService.cs
+using fit_box.Data;
 using fit_box.Models;
+using fit_box.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace fit_box.Services
@@ -25,9 +27,22 @@ namespace fit_box.Services
             return await _context.Marmitas.Include(m => m.Ingredientes).FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        // Criar nova marmita
-        public async Task<Marmita> CreateMarmitaAsync(Marmita marmita)
+        // Criar nova marmita com ingredientes do DTO
+        public async Task<Marmita> CreateMarmitaAsync(MarmitaDto marmitaDto)
         {
+            var marmita = new Marmita
+            {
+                Id = marmitaDto.Id,
+                NameMarmita = marmitaDto.NameMarmita,
+                TamanhoMarmita = marmitaDto.TamanhoMarmita,
+                LoginId = marmitaDto.LoginId,
+                Ingredientes = marmitaDto.Ingredientes.Select(dto => new Ingredientes
+                {
+                    NameIngrediente = dto.NameIngrediente,
+                    QuantidadeEmGramas = dto.QuantidadeEmGramas
+                }).ToList()
+            };
+
             _context.Marmitas.Add(marmita);
             await _context.SaveChangesAsync();
             return marmita;

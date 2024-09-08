@@ -1,4 +1,6 @@
-﻿using fit_box.Services;
+﻿// MarmitasController.cs
+using fit_box.DTOs;
+using fit_box.Services;
 using fit_box.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -40,9 +42,9 @@ namespace fit_box.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Marmita>> CreateMarmita(Marmita marmita)
+        public async Task<ActionResult<Marmita>> CreateMarmita([FromBody] MarmitaDto marmitaDto)
         {
-            var createdMarmita = await _marmitaService.CreateMarmitaAsync(marmita);
+            var createdMarmita = await _marmitaService.CreateMarmitaAsync(marmitaDto);
             return CreatedAtAction(nameof(GetMarmitas), new { id = createdMarmita.Id }, createdMarmita);
         }
 
