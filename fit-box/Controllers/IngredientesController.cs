@@ -1,6 +1,7 @@
 ﻿using fit_box.DTOs;
 using fit_box.Models;
 using fit_box.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace fit_box.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class IngredientesController : ControllerBase

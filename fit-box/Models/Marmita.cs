@@ -5,10 +5,11 @@
         public Guid Id { get; set; }
         public string NameMarmita { get; set; }
         public int TamanhoMarmita { get; set; }
+        public List<Ingredientes> Ingredientes { get; set; }
+        public DateTime DataCriacao { get; set; } = DateTime.Now;
 
         public Guid LoginId { get; set; }
         public Login Login { get; set; }
 
-        public ICollection<MarmitaIngrediente> MarmitaIngredientes { get; set; }
     }
 }

@@ -23,6 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     }));
 
 builder.Services.AddScoped<IIngredientesService, IngredientesService>();
+builder.Services.AddScoped<MarmitaService>();
 
 
 builder.Services.AddAuthentication(options =>

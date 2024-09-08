@@ -23,7 +23,6 @@
         public DbSet<Login> Logins { get; set; }
         public DbSet<Ingredientes> Ingrediente { get; set; }
         public DbSet<Marmita> Marmitas { get; set; }
-        public DbSet<MarmitaIngrediente> MarmitaIngredientes { get; set; }
 
         // Configurações do modelo
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -80,26 +79,6 @@
                 .HasForeignKey(m => m.LoginId)
                 .OnDelete(DeleteBehavior.Restrict); // Impede exclusão em cascata
 
-            // Configurações para a tabela MarmitaIngrediente
-            modelBuilder.Entity<MarmitaIngrediente>()
-                .ToTable("MarmitaIngredientes")
-                .HasKey(mi => new { mi.MarmitaId, mi.IngredienteId });
-
-            modelBuilder.Entity<MarmitaIngrediente>()
-                .HasOne(mi => mi.Marmita)
-                .WithMany(m => m.MarmitaIngredientes)
-                .HasForeignKey(mi => mi.MarmitaId)
-                .OnDelete(DeleteBehavior.Cascade); // Permite exclusão em cascata
-
-            modelBuilder.Entity<MarmitaIngrediente>()
-                .HasOne(mi => mi.Ingrediente)
-                .WithMany()
-                .HasForeignKey(mi => mi.IngredienteId)
-                .OnDelete(DeleteBehavior.Restrict); // Impede exclusão em cascata
-
-            modelBuilder.Entity<MarmitaIngrediente>()
-                .Property(mi => mi.QuantidadeEmGramas)
-                .IsRequired();
         }
     }
 }
