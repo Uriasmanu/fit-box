@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fit_box.Data;
 
@@ -11,9 +12,11 @@ using fit_box.Data;
 namespace fit_box.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240908232539_AddQuantidadeEmGramasToIngrediente")]
+    partial class AddQuantidadeEmGramasToIngrediente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,7 +31,7 @@ namespace fit_box.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("LoginId")
+                    b.Property<Guid>("LoginId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("MarmitaId")
@@ -38,6 +41,9 @@ namespace fit_box.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("QuantidadeEmEstoque")
+                        .HasColumnType("int");
 
                     b.Property<int>("QuantidadeEmGramas")
                         .HasColumnType("int");
@@ -100,13 +106,17 @@ namespace fit_box.Migrations
 
             modelBuilder.Entity("fit_box.Models.Ingredientes", b =>
                 {
-                    b.HasOne("fit_box.Models.Login", null)
+                    b.HasOne("fit_box.Models.Login", "Login")
                         .WithMany("Ingredientes")
-                        .HasForeignKey("LoginId");
+                        .HasForeignKey("LoginId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("fit_box.Models.Marmita", null)
                         .WithMany("Ingredientes")
                         .HasForeignKey("MarmitaId");
+
+                    b.Navigation("Login");
                 });
 
             modelBuilder.Entity("fit_box.Models.Marmita", b =>

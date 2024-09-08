@@ -21,7 +21,6 @@
 
         // Definição das tabelas
         public DbSet<Login> Logins { get; set; }
-        public DbSet<Ingredientes> Ingrediente { get; set; }
         public DbSet<Marmita> Marmitas { get; set; }
 
         // Configurações do modelo
@@ -29,7 +28,6 @@
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configurações para a tabela Login
             modelBuilder.Entity<Login>()
                 .ToTable("Logins")
                 .HasKey(l => l.Id);
@@ -39,27 +37,6 @@
                 .IsRequired()
                 .HasMaxLength(100);
 
-            // Configurações para a tabela Ingredientes
-            modelBuilder.Entity<Ingredientes>()
-                .ToTable("Ingredientes")
-                .HasKey(i => i.Id);
-
-            modelBuilder.Entity<Ingredientes>()
-                .Property(i => i.NameIngrediente)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            modelBuilder.Entity<Ingredientes>()
-                .Property(i => i.QuantidadeEmEstoque)
-                .IsRequired();
-
-            modelBuilder.Entity<Ingredientes>()
-                .HasOne(i => i.Login)
-                .WithMany(l => l.Ingredientes)
-                .HasForeignKey(i => i.LoginId)
-                .OnDelete(DeleteBehavior.Restrict); // Impede exclusão em cascata
-
-            // Configurações para a tabela Marmita
             modelBuilder.Entity<Marmita>()
                 .ToTable("Marmitas")
                 .HasKey(m => m.Id);
@@ -79,6 +56,21 @@
                 .HasForeignKey(m => m.LoginId)
                 .OnDelete(DeleteBehavior.Restrict); // Impede exclusão em cascata
 
+            modelBuilder.Entity<Ingredientes>()
+                .ToTable("Ingredientes")
+                .HasKey(i => i.Id);
+
+            modelBuilder.Entity<Ingredientes>()
+                .Property(i => i.NameIngrediente)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<Ingredientes>()
+                .Property(i => i.QuantidadeEmGramas)
+                .IsRequired();
+
+  
         }
+
     }
 }

@@ -1,11 +1,11 @@
-﻿// MarmitasController.cs
-using fit_box.DTOs;
+﻿using fit_box.DTOs;
 using fit_box.Services;
 using fit_box.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace fit_box.Controllers
 {
@@ -35,7 +35,7 @@ namespace fit_box.Controllers
 
             if (marmita == null)
             {
-                return NotFound();
+                return NotFound(new { Message = "Marmita não encontrada." });
             }
 
             return Ok(marmita);
@@ -44,8 +44,28 @@ namespace fit_box.Controllers
         [HttpPost]
         public async Task<ActionResult<Marmita>> CreateMarmita([FromBody] MarmitaDto marmitaDto)
         {
-            var createdMarmita = await _marmitaService.CreateMarmitaAsync(marmitaDto);
-            return CreatedAtAction(nameof(GetMarmitas), new { id = createdMarmita.Id }, createdMarmita);
+            try
+            {
+                var createdMarmita = await _marmitaService.CreateMarmitaAsync(marmitaDto);
+                return CreatedAtAction(nameof(GetMarmita), new { id = createdMarmita.Id }, createdMarmita);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Captura detalhes específicos de problemas de banco de dados
+                var innerException = dbEx.InnerException?.Message ?? "Erro desconhecido no banco de dados.";
+                return StatusCode(500, new { Message = "Erro ao criar marmita.", Details = innerException });
+            }
+            catch (Exception ex)
+            {
+                // Verifica se a exceção é sobre o LoginId não encontrado
+                if (ex.Message.Contains("LoginId fornecido não existe"))
+                {
+                    return BadRequest(new { Message = "O LoginId fornecido não existe." });
+                }
+
+                // Para outras exceções, retornar uma resposta genérica
+                return StatusCode(500, new { Message = "Erro ao criar marmita.", Details = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
@@ -54,7 +74,7 @@ namespace fit_box.Controllers
             var result = await _marmitaService.DeleteMarmitaAsync(id);
             if (!result)
             {
-                return NotFound();
+                return NotFound(new { Message = "Marmita não encontrada." });
             }
 
             return NoContent();

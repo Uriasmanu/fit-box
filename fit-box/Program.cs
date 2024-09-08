@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure the database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+    options.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=50;",
     sqlOptions =>
     {
         sqlOptions.EnableRetryOnFailure(
@@ -22,7 +22,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             errorNumbersToAdd: null);
     }));
 
-builder.Services.AddScoped<IIngredientesService, IngredientesService>();
+
 builder.Services.AddScoped<MarmitaService>();
 
 

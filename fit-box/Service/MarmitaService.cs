@@ -1,5 +1,4 @@
-﻿// MarmitaService.cs
-using fit_box.Data;
+﻿using fit_box.Data;
 using fit_box.Models;
 using fit_box.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -27,12 +26,26 @@ namespace fit_box.Services
             return await _context.Marmitas.Include(m => m.Ingredientes).FirstOrDefaultAsync(m => m.Id == id);
         }
 
+        // Verificar se o LoginId existe
+        private async Task<bool> LoginExistsAsync(Guid loginId)
+        {
+            return await _context.Logins.AnyAsync(l => l.Id == loginId);
+        }
+
         // Criar nova marmita com ingredientes do DTO
         public async Task<Marmita> CreateMarmitaAsync(MarmitaDto marmitaDto)
         {
+            // Verifica se o LoginId fornecido existe
+            var loginExists = await _context.Logins.AnyAsync(l => l.Id == marmitaDto.LoginId);
+            if (!loginExists)
+            {
+                throw new Exception("LoginId fornecido não existe.");
+            }
+
+            // Cria a nova marmita
             var marmita = new Marmita
             {
-                Id = marmitaDto.Id,
+                Id = Guid.NewGuid(),
                 NameMarmita = marmitaDto.NameMarmita,
                 TamanhoMarmita = marmitaDto.TamanhoMarmita,
                 LoginId = marmitaDto.LoginId,
@@ -47,6 +60,7 @@ namespace fit_box.Services
             await _context.SaveChangesAsync();
             return marmita;
         }
+
 
         // Deletar marmita
         public async Task<bool> DeleteMarmitaAsync(Guid id)

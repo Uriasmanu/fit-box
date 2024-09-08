@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fit_box.Data;
 
@@ -11,9 +12,11 @@ using fit_box.Data;
 namespace fit_box.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240908233723_ajuste")]
+    partial class ajuste
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +34,7 @@ namespace fit_box.Migrations
                     b.Property<Guid?>("LoginId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("MarmitaId")
+                    b.Property<Guid>("MarmitaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameIngrediente")
@@ -104,9 +107,13 @@ namespace fit_box.Migrations
                         .WithMany("Ingredientes")
                         .HasForeignKey("LoginId");
 
-                    b.HasOne("fit_box.Models.Marmita", null)
+                    b.HasOne("fit_box.Models.Marmita", "Marmita")
                         .WithMany("Ingredientes")
-                        .HasForeignKey("MarmitaId");
+                        .HasForeignKey("MarmitaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Marmita");
                 });
 
             modelBuilder.Entity("fit_box.Models.Marmita", b =>
