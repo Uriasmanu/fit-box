@@ -22,6 +22,7 @@
         // Definição das tabelas
         public DbSet<Login> Logins { get; set; }
         public DbSet<Marmita> Marmitas { get; set; }
+        public DbSet<Ingredientes> Ingredientes { get; set; }
 
         // Configurações do modelo
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,35 +42,21 @@
                 .ToTable("Marmitas")
                 .HasKey(m => m.Id);
 
-            modelBuilder.Entity<Marmita>()
-                .Property(m => m.NameMarmita)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            modelBuilder.Entity<Marmita>()
-                .Property(m => m.TamanhoMarmita)
-                .IsRequired();
-
-            modelBuilder.Entity<Marmita>()
-                .HasOne(m => m.Login)
-                .WithMany(l => l.Marmitas)
-                .HasForeignKey(m => m.LoginId)
-                .OnDelete(DeleteBehavior.Restrict); // Impede exclusão em cascata
-
             modelBuilder.Entity<Ingredientes>()
                 .ToTable("Ingredientes")
                 .HasKey(i => i.Id);
 
-            modelBuilder.Entity<Ingredientes>()
-                .Property(i => i.NameIngrediente)
-                .IsRequired()
-                .HasMaxLength(100);
+            // Configurando o relacionamento muitos-para-muitos entre Marmita e Ingredientes
+            modelBuilder.Entity<Marmita>()
+                .HasMany(m => m.Ingredientes)
+                .WithMany(i => i.Marmitas)
+                .UsingEntity(j => j.ToTable("MarmitaIngredientes"));
 
-            modelBuilder.Entity<Ingredientes>()
-                .Property(i => i.QuantidadeEmGramas)
-                .IsRequired();
-
-  
+            // Configurando o relacionamento entre Marmita e Login
+            modelBuilder.Entity<Marmita>()
+                .HasOne(m => m.Login)
+                .WithMany(l => l.Marmitas)
+                .HasForeignKey(m => m.LoginId);
         }
 
     }

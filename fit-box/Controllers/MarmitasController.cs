@@ -44,6 +44,8 @@ namespace fit_box.Controllers
         [HttpPost]
         public async Task<ActionResult<Marmita>> CreateMarmita([FromBody] MarmitaDto marmitaDto)
         {
+            var token = Request.Headers["Authorization"].ToString();
+            Console.WriteLine("Received Token: " + token);
             try
             {
                 var createdMarmita = await _marmitaService.CreateMarmitaAsync(marmitaDto);

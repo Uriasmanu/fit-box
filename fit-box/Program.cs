@@ -22,9 +22,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             errorNumbersToAdd: null);
     }));
 
-
 builder.Services.AddScoped<MarmitaService>();
-
+builder.Services.AddScoped<LoginService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -55,18 +54,20 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen( c =>
+builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FitBox - Gestor de Marmitas", Version = "v1" }); // Nome da API que aparece no Swagger
-
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FitBox - Gestor de Marmitas", Version = "v1" });
 
     var securitySchema = new OpenApiSecurityScheme
     {
-        Name = "JWR Autenticação",
+        Name = "JWT Autenticação",
         Description = "Entre com o JWT Bearer token",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
@@ -82,13 +83,9 @@ builder.Services.AddSwaggerGen( c =>
     c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securitySchema);
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        {securitySchema, new string[] {} }
+        { securitySchema, new string[] { } }
     });
-
 });
-
-// Register the LoginService
-builder.Services.AddScoped<LoginService>();
 
 var app = builder.Build();
 
@@ -109,12 +106,11 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Enable Swagger middleware
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-    c.RoutePrefix = string.Empty; // Set the Swagger UI at the root ("/")
+    c.RoutePrefix = string.Empty;
 });
 
 app.MapControllerRoute(

@@ -22,6 +22,21 @@ namespace fit_box.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("IngredientesMarmita", b =>
+                {
+                    b.Property<Guid>("IngredientesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MarmitasId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("IngredientesId", "MarmitasId");
+
+                    b.HasIndex("MarmitasId");
+
+                    b.ToTable("MarmitaIngredientes", (string)null);
+                });
+
             modelBuilder.Entity("fit_box.Models.Ingredientes", b =>
                 {
                     b.Property<Guid>("Id")
@@ -31,13 +46,9 @@ namespace fit_box.Migrations
                     b.Property<Guid?>("LoginId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("MarmitaId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("NameIngrediente")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("QuantidadeEmGramas")
                         .HasColumnType("int");
@@ -45,8 +56,6 @@ namespace fit_box.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LoginId");
-
-                    b.HasIndex("MarmitaId");
 
                     b.ToTable("Ingredientes", (string)null);
                 });
@@ -85,8 +94,7 @@ namespace fit_box.Migrations
 
                     b.Property<string>("NameMarmita")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TamanhoMarmita")
                         .HasColumnType("int");
@@ -98,15 +106,26 @@ namespace fit_box.Migrations
                     b.ToTable("Marmitas", (string)null);
                 });
 
+            modelBuilder.Entity("IngredientesMarmita", b =>
+                {
+                    b.HasOne("fit_box.Models.Ingredientes", null)
+                        .WithMany()
+                        .HasForeignKey("IngredientesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("fit_box.Models.Marmita", null)
+                        .WithMany()
+                        .HasForeignKey("MarmitasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("fit_box.Models.Ingredientes", b =>
                 {
                     b.HasOne("fit_box.Models.Login", null)
                         .WithMany("Ingredientes")
                         .HasForeignKey("LoginId");
-
-                    b.HasOne("fit_box.Models.Marmita", null)
-                        .WithMany("Ingredientes")
-                        .HasForeignKey("MarmitaId");
                 });
 
             modelBuilder.Entity("fit_box.Models.Marmita", b =>
@@ -114,7 +133,7 @@ namespace fit_box.Migrations
                     b.HasOne("fit_box.Models.Login", "Login")
                         .WithMany("Marmitas")
                         .HasForeignKey("LoginId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Login");
@@ -125,11 +144,6 @@ namespace fit_box.Migrations
                     b.Navigation("Ingredientes");
 
                     b.Navigation("Marmitas");
-                });
-
-            modelBuilder.Entity("fit_box.Models.Marmita", b =>
-                {
-                    b.Navigation("Ingredientes");
                 });
 #pragma warning restore 612, 618
         }
