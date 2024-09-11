@@ -10,12 +10,13 @@
         {
         }
 
-        // String de conexão
+        // String de conexão PostgreSQL
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+                // Conectando ao PostgreSQL usando Npgsql
+                optionsBuilder.UseNpgsql("Host=ep-quiet-sky-a5mjgav5.us-east-2.aws.neon.tech;Username=fitBoxdb_owner;Password=39BlfTwIKSZD;Database=fitBoxdb;sslmode=Require");
             }
         }
 

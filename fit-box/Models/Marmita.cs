@@ -11,5 +11,7 @@
         public Guid LoginId { get; set; }
         public Login Login { get; set; }
 
+        public bool Favorito { get; set; } = false;
+
     }
 }

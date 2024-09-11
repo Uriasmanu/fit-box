@@ -13,13 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure the database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer("Server=tcp:fit-box-server.database.windows.net,1433;Initial Catalog=sql-fit-box;Persist Security Info=False;User ID=manoela;Password=senha123#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=50;",
-    sqlOptions =>
+    options.UseNpgsql("Host=ep-quiet-sky-a5mjgav5.us-east-2.aws.neon.tech;Username=fitBoxdb_owner;Password=39BlfTwIKSZD;Database=fitBoxdb;sslmode=Require",
+    npgsqlOptions =>
     {
-        sqlOptions.EnableRetryOnFailure(
+        npgsqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
+            errorCodesToAdd: null); // Substituindo por PostgreSQL
     }));
 
 builder.Services.AddScoped<MarmitaService>();
